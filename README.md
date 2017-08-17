@@ -9,3 +9,6 @@ This is mainly a kind of POC to generate an Gcode-file for every diameter of the
 - choose between "mm" or "in" as unit
 - Insert dimensions of the bit and probe block
 - get the gcode as text or as file for download
+
+# How to build an probe block DIY
+Maybe there will be a videotutorial but not at the moment.
