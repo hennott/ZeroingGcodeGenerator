@@ -18,39 +18,39 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
 
 			if($('#Unit').is(':checked')) {
 				// @M:Gcode in mm;
-				gcode += 'G21\n';
+				gcode += 'G21\r\n';
 			}
 			// @M:Run left until hit the probe with reduced feedrate;
-			gcode += 'G38.2 X -'+plx/2+' F'+pfr+'\n';
+			gcode += 'G38.2 X -'+plx/2+' F'+pfr+'\r\n';
 			// @M:Set X-Offset;
 			var OffsetX = plx+td/2;
-			gcode += 'G92 X '+OffsetX+';\n';
+			gcode += 'G92 X '+OffsetX+';\r\n';
 			// @M:Run on the top side of the ProbeBlock;
-			gcode += 'G91 G0 X '+plx/2+'\n';
-			gcode += 'G91 G0 Y '+ply+'\n';
-			gcode += 'G91 G0 X -'+plx+'\n';
+			gcode += 'G91 G0 X '+plx/2+'\r\n';
+			gcode += 'G91 G0 Y '+ply+'\r\n';
+			gcode += 'G91 G0 X -'+plx+'\r\n';
 			// @M:Wait for 5seconds to move the tool;
-			gcode += 'G4 P5000\n';
+			gcode += 'G4 P5000\r\n';
 			// @M:Run down until hit the probe with reduced feedrate;
-			gcode += 'G38.2 Y -'+ply/2+' F'+pfr+'\n';
+			gcode += 'G38.2 Y -'+ply/2+' F'+pfr+'\r\n';
 			// @M:Set Y-Offset;
 			var OffsetY = ply+td/2;
-			gcode += 'G92 Y '+OffsetY+'\n';
+			gcode += 'G92 Y '+OffsetY+'\r\n';
 			// @M:Run on the upperside of the ProbeBlock;
-			gcode += 'G91 G0 Y '+ply/2+'\n';
-			gcode += 'G91 G0 Z '+plz+'\n';
-			gcode += 'G91 G0 Y -'+ply+'\n';
+			gcode += 'G91 G0 Y '+ply/2+'\r\n';
+			gcode += 'G91 G0 Z '+plz+'\r\n';
+			gcode += 'G91 G0 Y -'+ply+'\r\n';
 			// @M:Run down until hit the probe with reduced feedrate;
-			gcode += 'G38.2 Z -'+plz/2+' F'+pfr+'\n';
+			gcode += 'G38.2 Z -'+plz/2+' F'+pfr+'\r\n';
 			// @M:Set Z-Offset;
-			gcode += 'G92 Z '+plz+'\n';
+			gcode += 'G92 Z '+plz+'\r\n';
 			// @M:Run 10mm above the ProbeBlock;
-			gcode += 'G91 G0 Z 10\n';
+			gcode += 'G91 G0 Z 10\r\n';
 			// @M:Run to the zero position XY;
-			gcode += 'G90 G0 Y 0 X 0 \n';
+			gcode += 'G90 G0 Y 0 X 0 \r\n';
 			// @M:End of program;
-			gcode += 'M30\n';
-			$('#GcodeBtn').attr('href',gcode);
+			gcode += 'M30\r\n';
+			$('#GcodeBtn').attr('href','data:text/plain,'+encodeURI(gcode));
 			$('#GcodeText').text(gcode);
 		}
 
@@ -62,16 +62,139 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
 			generate();
 		});
 		</script>
+
+		<style>
+			body {
+				background-color: #EEEEEE;
+			}
+			.form {
+				background-color: #FFFFFF;
+				width: 500px;
+				margin: auto;
+				padding: 10px;
+			}
+			.line {
+				margin-bottom: 10px; 
+			}
+			.label {
+				width: 100px;
+				font-size: 8pt;
+				float: left;
+			}
+			.field {
+				font-size: 12pt;
+				float: left;
+			}
+			.button {
+				display: block;
+				border: 1px solid #666666;
+				padding: 10px;
+				text-decoration: none;
+				color: #00AA66;
+				background-color: #DDDDDD
+			}
+		</style>
 	</head>
 	<body>
-		<input class="param" id="Unit" type="checkbox" value="mm" selected="selected" />in mm<br />
-		<input class="param" id="ToolDiameter" type="text" value="5.0" /><br />
-		<input class="param" id="ProbeLenX" type="text" value="50.0" /><br />
-		<input class="param" id="ProbeLenY" type="text" value="50.0" /><br />
-		<input class="param" id="ProbeLenZ" type="text" value="10.0" /><br />
-		<input class="param" id="ProbeFeedrate" type="text" value="5" /><br />
-		<a href="#" onclick="generate(); return false;">Generate</a><br />
-		<textarea id="GcodeText"></textarea><br />
-		<a id="GcodeBtn" href="data:,TEST" download="zero.gcode">Download</a>
+		<div class="form">
+			<div style="font-size: 20pt; margin-bottom: 20px; font-weight: bold;">
+				Zeroing Gcode Generator
+			</div>
+			<div class="line">
+				<div class="label">
+					Unit			
+				</div>
+				<div class="field">
+					<input class="param" id="Unit" type="checkbox" value="mm" selected="selected" />in mm
+				</div>
+				<div style="clear: both"></div>
+			</div>
+
+			<div class="line">
+				<div class="label">
+					Tool diameter			
+				</div>
+				<div class="field">
+					<input class="param" id="ToolDiameter" type="text" value="5.0" />
+				</div>
+				<div style="clear: both"></div>
+			</div>
+
+			<div class="line">
+				<div class="label">
+					Probe width X			
+				</div>
+				<div class="field">
+					<input class="param" id="ProbeLenX" type="text" value="50.0" />
+				</div>
+				<div style="clear: both"></div>
+			</div>
+
+			<div class="line">
+				<div class="label">
+					Probe length Y			
+				</div>
+				<div class="field">
+					<input class="param" id="ProbeLenY" type="text" value="50.0" />
+				</div>
+				<div style="clear: both"></div>
+			</div>
+
+			<div class="line">
+				<div class="label">
+					Probe height Z			
+				</div>
+				<div class="field">
+					<input class="param" id="ProbeLenZ" type="text" value="10.0" />
+				</div>
+				<div style="clear: both"></div>
+			</div>
+
+			<div class="line">
+				<div class="label">
+					Feedrate			
+				</div>
+				<div class="field">
+					<input class="param" id="ProbeFeedrate" type="text" value="5" />
+				</div>
+				<div style="clear: both"></div>
+			</div>
+
+
+			<div class="line">
+				<div class="label">
+					.
+				</div>
+				<div class="field">
+					<a class="button" href="#" onclick="generate(); return false;">Generate</a>
+				</div>
+				<div style="clear: both"></div>
+			</div>
+
+
+			<div class="line">
+				<div class="label">
+					Gcode			
+				</div>
+				<div class="field">
+					<textarea id="GcodeText"></textarea>
+				</div>
+				<div style="clear: both"></div>
+			</div>
+
+
+			<div class="line">
+				<div class="label">
+					.
+				</div>
+				<div class="field">
+					<a class="button" id="GcodeBtn" href="data:tetx/plain," download="zero.nc">Download</a>
+				</div>
+				<div style="clear: both"></div>
+			</div>
+			<div style="font-size: 8pt;">
+				<a style="text-decoration: none; color: #999999;" href="https://github.com/hennott/ZeroingGcodeGenerator">powered by Hennott.de and hostet at GitHub.com</a>
+			</div>
+		</div>		
 	</body>
 </html>
