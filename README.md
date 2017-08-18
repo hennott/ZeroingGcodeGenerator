@@ -14,3 +14,6 @@ This is mainly a kind of POC to generate an Gcode-file for every diameter of the
 
 # How to build an probe block DIY
 Maybe there will be a videotutorial but not at the moment.
+
+# Sketchup of the startng position
+![screenshot](https://github.com/hennott/ZeroingGcodeGenerator/blob/master/ZeroingGcodeGenerator_Schema.PNG "Screenshot of the app")
