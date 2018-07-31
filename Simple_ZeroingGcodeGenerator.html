@@ -11,47 +11,42 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
 			var plx = parseFloat($('#ProbeLenX').val());
 			var ply = parseFloat($('#ProbeLenY').val()); 
 			var plz = parseFloat($('#ProbeLenZ').val()); 
-			var pfr = parseFloat($('#ProbeFeedrate').val()); 
+			var pfr = parseFloat($('#ProbeFeedrate').val());
+			var pdi = parseFloat($('#ProbeDistance').val()); 
 			
 			// @M:Position the router on the right side of the ProbeBlock;
-			var gcode = '';
+			if($('#Risk').is(':checked')) {
+				var gcode = '';
 
-			if($('#Unit').is(':checked')) {
-				// @M:Gcode in mm;
-				gcode += 'G21\r\n';
+				if($('#Unit').is(':checked')) {
+					// @M:Gcode in mm;
+					gcode += 'G21\r\n';
+				}
+
+				gcode += 'G38.2 Z -'+pdi+' F'+pfr+'\r\n';
+				gcode += 'G91 G0 Z '+pdi/2+'\r\n';
+				gcode += 'G91 G0 Y -'+pdi+'\r\n';
+				gcode += 'G91 G0 Z -'+pdi+'\r\n';
+				gcode += 'G4 P5\r\n';
+				
+				gcode += 'G38.2 Y '+pdi+' F'+pfr+'\r\n';
+
+				gcode += 'G91 G0 Y -'+pdi/2+'\r\n';
+				gcode += 'G91 G0 Z '+pdi+'\r\n';
+				gcode += 'G91 G0 Y '+pdi+'\r\n';
+				gcode += 'G91 G0 X -'+pdi+'\r\n';
+				gcode += 'G91 G0 Z -'+pdi+'\r\n';
+				gcode += 'G4 P5\r\n';
+				gcode += 'G38.2 X '+pdi+' F'+pfr+'\r\n';
+				gcode += 'G91 G0 X -'+pdi/2+'\r\n';
+				gcode += 'G91 G0 Z '+pdi+'\r\n';
+				gcode += 'G91 G0 X '+pdi+'\r\n';
+				gcode += 'G10 L20 P1 X-'+(plx+td/2+pdi/2)+' Y-'+(ply+td/2-pdi/2)+' Z'+(plz+pdi/2)+'\r\n';
+				gcode += 'G90 G0 X 0 Y 0\r\n';
+
+				$('#GcodeBtn').attr('href','data:text/plain,'+encodeURI(gcode));
+				$('#GcodeText').text(gcode);
 			}
-			// @M:Run left until hit the probe with reduced feedrate;
-			gcode += 'G38.2 X -'+plx/2+' F'+pfr+'\r\n';
-			// @M:Set X-Offset;
-			var OffsetX = plx+td/2;
-			gcode += 'G92 X '+OffsetX+';\r\n';
-			// @M:Run on the top side of the ProbeBlock;
-			gcode += 'G91 G0 X '+plx/2+'\r\n';
-			gcode += 'G91 G0 Y '+ply+'\r\n';
-			gcode += 'G91 G0 X -'+plx+'\r\n';
-			// @M:Wait for 5seconds to move the tool;
-			gcode += 'G4 P5000\r\n';
-			// @M:Run down until hit the probe with reduced feedrate;
-			gcode += 'G38.2 Y -'+ply/2+' F'+pfr+'\r\n';
-			// @M:Set Y-Offset;
-			var OffsetY = ply+td/2;
-			gcode += 'G92 Y '+OffsetY+'\r\n';
-			// @M:Run on the upperside of the ProbeBlock;
-			gcode += 'G91 G0 Y '+ply/2+'\r\n';
-			gcode += 'G91 G0 Z '+plz+'\r\n';
-			gcode += 'G91 G0 Y -'+ply+'\r\n';
-			// @M:Run down until hit the probe with reduced feedrate;
-			gcode += 'G38.2 Z -'+plz/2+' F'+pfr+'\r\n';
-			// @M:Set Z-Offset;
-			gcode += 'G92 Z '+plz+'\r\n';
-			// @M:Run 10mm above the ProbeBlock;
-			gcode += 'G91 G0 Z 10\r\n';
-			// @M:Run to the zero position XY;
-			gcode += 'G90 G0 Y 0 X 0 \r\n';
-			// @M:End of program;
-			gcode += 'M30\r\n';
-			$('#GcodeBtn').attr('href','data:text/plain,'+encodeURI(gcode));
-			$('#GcodeText').text(gcode);
 		}
 
 		$('.param').on('update, change, keyup', function() {
@@ -95,17 +90,20 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
 			}
 		</style>
 	</head>
-	<body>
+	<body style="font-family: Helvetica">
 		<div class="form">
-			<div style="font-size: 20pt; margin-bottom: 20px; font-weight: bold;">
+			<div style="font-size: 20pt; margin-bottom: 5px; font-weight: bold;">
 				Zeroing Gcode Generator
+			</div>
+			<div style="font-size: 15pt; margin-bottom: 20px;">
+				for Shapeoko Probe
 			</div>
 			<div class="line">
 				<div class="label">
 					Unit			
 				</div>
 				<div class="field">
-					<input class="param" id="Unit" type="checkbox" value="mm" selected="selected" />in mm
+					<input class="param" id="Unit" type="checkbox" value="mm" checked="checked" />in mm
 				</div>
 				<div style="clear: both"></div>
 			</div>
@@ -125,7 +123,7 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
 					Probe width X			
 				</div>
 				<div class="field">
-					<input class="param" id="ProbeLenX" type="text" value="50.0" />
+					<input class="param" id="ProbeLenX" type="text" value="7.0" />
 				</div>
 				<div style="clear: both"></div>
 			</div>
@@ -135,7 +133,7 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
 					Probe length Y			
 				</div>
 				<div class="field">
-					<input class="param" id="ProbeLenY" type="text" value="50.0" />
+					<input class="param" id="ProbeLenY" type="text" value="7.0" />
 				</div>
 				<div style="clear: both"></div>
 			</div>
@@ -145,7 +143,7 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
 					Probe height Z			
 				</div>
 				<div class="field">
-					<input class="param" id="ProbeLenZ" type="text" value="10.0" />
+					<input class="param" id="ProbeLenZ" type="text" value="22.0" />
 				</div>
 				<div style="clear: both"></div>
 			</div>
@@ -160,6 +158,25 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
 				<div style="clear: both"></div>
 			</div>
 
+			<div class="line">
+				<div class="label">
+					Probe distance			
+				</div>
+				<div class="field">
+					<input class="param" id="ProbeDistance" type="text" value="10" />
+				</div>
+				<div style="clear: both"></div>
+			</div>
+
+			<div class="line">
+				<div class="label">
+					Usage on own risk!			
+				</div>
+				<div class="field">
+					<input class="param" id="Risk" type="checkbox" value="true" />
+				</div>
+				<div style="clear: both"></div>
+			</div>
 
 			<div class="line">
 				<div class="label">
@@ -171,7 +188,6 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
 				<div style="clear: both"></div>
 			</div>
 
-
 			<div class="line">
 				<div class="label">
 					Gcode			
@@ -181,7 +197,6 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
 				</div>
 				<div style="clear: both"></div>
 			</div>
-
 
 			<div class="line">
 				<div class="label">
@@ -193,7 +208,7 @@ null==d?void 0:d))},attrHooks:{type:{set:function(a,b){if(!o.radioValue&&"radio"
 				<div style="clear: both"></div>
 			</div>
 			<div style="font-size: 8pt;">
-				<a style="text-decoration: none; color: #999999;" href="https://github.com/hennott/ZeroingGcodeGenerator">powered by Hennott.de and hostet at GitHub.com</a>
+				<a style="text-decoration: none; color: #999999;" href="https://github.com/hennott/ZeroingGcodeGenerator">v2 | non-commercial project powered by Hennott.de and hostet at GitHub.com</a>
 			</div>
 		</div>		
 	</body>
